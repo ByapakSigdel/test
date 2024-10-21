@@ -9,13 +9,14 @@ const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 const SignInPage = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState(''); // Change from email to username
   const [password, setPassword] = useState('');
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await pb.collection('users').authWithPassword(email, password);
+      // Authenticate with username and password
+      await pb.collection('users').authWithPassword(username, password); // Use custom_users or users based on your collection
       router.push('/games'); // Redirect after successful sign in
     } catch (err) {
       console.error('Sign-in failed:', err);
@@ -33,12 +34,12 @@ const SignInPage = () => {
         <form onSubmit={handleSignIn}>
           <h1 className="text-xl font-semibold mb-4">Sign In</h1>
           <div className="mb-4">
-            <label className="block text-sm mb-1">Email:</label>
+            <label className="block text-sm mb-1">Username:</label> {/* Change label to Username */}
             <input
-              type="email"
+              type="text" // Change type to text for username
               className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
