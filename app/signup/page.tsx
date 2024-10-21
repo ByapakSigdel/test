@@ -16,7 +16,11 @@ const SignUpPage = () => {
     e.preventDefault();
     try {
       // Create user with username and password
-      await pb.collection('users').create({ username, password });
+      await pb.collection('users').create({
+        username,
+        password,
+        passwordConfirm: password, // Ensure password confirmation is included
+      });
       await pb.collection('users').authWithPassword(username, password);
       router.push('/games'); // Redirect after successful sign up
     } catch (err) {
