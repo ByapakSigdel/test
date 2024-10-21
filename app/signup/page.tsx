@@ -9,14 +9,15 @@ const pb = new PocketBase('http://127.0.0.1:8090');
 
 const SignUpPage = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await pb.collection('users').create({ email, password });
-      await pb.collection('users').authWithPassword(email, password);
+      // Create user with username and password
+      await pb.collection('users').create({ username, password });
+      await pb.collection('users').authWithPassword(username, password);
       router.push('/games'); // Redirect after successful sign up
     } catch (err) {
       console.error('Sign-up failed:', err);
@@ -34,12 +35,12 @@ const SignUpPage = () => {
         <form onSubmit={handleSignUp}>
           <h1 className="text-xl font-semibold mb-4">Sign Up</h1>
           <div className="mb-4">
-            <label className="block text-sm mb-1">Email:</label>
+            <label className="block text-sm mb-1">Username:</label>
             <input
-              type="email"
+              type="text"
               className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
