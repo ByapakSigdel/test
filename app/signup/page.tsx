@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import PocketBase from 'pocketbase';
 import ToggleSwitch from '@/components/ToggleSwitch';
 
-const pb = new PocketBase('http://127.0.0.1:8090');
+const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 const SignUpPage = () => {
   const router = useRouter();
