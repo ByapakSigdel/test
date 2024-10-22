@@ -73,7 +73,7 @@ const SignUpPage = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="bg-white bg-opacity-20 backdrop-blur-lg p-8 rounded-xl shadow-lg w-80 text-white mr-32"> {/* Adjust margin as needed */}
+      <div className="bg-white bg-opacity-20 backdrop-blur-lg p-8 rounded-xl shadow-lg w-100 text-white mr-32"> {/* Adjust margin as needed */}
         <ToggleSwitch isSignUp={true} onToggle={toggleToSignIn} />
         <form onSubmit={handleSignUp}>
           <h1 className="text-2xl font-bold mb-6">Sign Up</h1>
