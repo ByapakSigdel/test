@@ -9,20 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.10.3",
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
-    "framer-motion": "^11.11.9",
+    "axios": "^1.7.7",
     "next": "14.2.15",
     "pocketbase": "^0.21.5",
     "react": "^18",
     "react-dom": "^18",
-    "react-spinners": "^0.14.1"
+    "react-google-recaptcha": "^3.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-google-recaptcha": "^2.1.9",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
     "postcss": "^8",
