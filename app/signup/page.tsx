@@ -1,9 +1,11 @@
-// app/signup/page.tsx
+// /app/signup/page.tsx
 'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PocketBase from 'pocketbase';
 import ToggleSwitch from '@/components/ToggleSwitch';
+import Captcha from '@/components/Captcha';
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -11,20 +13,49 @@ const SignUpPage = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      alert('Please complete the CAPTCHA.');
+      return;
+    }
+
+    // Verify CAPTCHA token with your backend
+    const isCaptchaValid = await validateCaptcha(captchaToken);
+    if (!isCaptchaValid) {
+      alert('Invalid CAPTCHA');
+      return;
+    }
+
     try {
-      // Create user with username and password
       await pb.collection('users').create({
         username,
         password,
-        passwordConfirm: password, // Ensure password confirmation is included
+        passwordConfirm: password,
       });
       await pb.collection('users').authWithPassword(username, password);
       router.push('/games'); // Redirect after successful sign up
     } catch (err) {
       console.error('Sign-up failed:', err);
+    }
+  };
+
+  const validateCaptcha = async (token: string) => {
+    try {
+      const response = await fetch('/api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+      const data = await response.json();
+      return data.message === 'Success';
+    } catch (err) {
+      console.error('Captcha validation failed:', err);
+      return false;
     }
   };
 
@@ -58,9 +89,10 @@ const SignUpPage = () => {
               required
             />
           </div>
+          <Captcha onVerify={(token) => setCaptchaToken(token)} />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700 transition-colors duration-200"
+            className="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700 transition-colors duration-200 mt-4"
           >
             Sign Up
           </button>

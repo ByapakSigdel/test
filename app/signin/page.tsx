@@ -1,25 +1,56 @@
-// app/signin/page.tsx
+// /app/signin/page.tsx
 'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PocketBase from 'pocketbase';
 import ToggleSwitch from '@/components/ToggleSwitch';
+import Captcha from '@/components/Captcha';
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 const SignInPage = () => {
   const router = useRouter();
-  const [username, setUsername] = useState(''); // Change from email to username
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      alert('Please complete the CAPTCHA.');
+      return;
+    }
+
+    // Verify CAPTCHA token with your backend
+    const isCaptchaValid = await validateCaptcha(captchaToken);
+    if (!isCaptchaValid) {
+      alert('Invalid CAPTCHA');
+      return;
+    }
+
     try {
-      // Authenticate with username and password
-      await pb.collection('users').authWithPassword(username, password); // Use custom_users or users based on your collection
+      await pb.collection('users').authWithPassword(username, password);
       router.push('/games'); // Redirect after successful sign in
     } catch (err) {
       console.error('Sign-in failed:', err);
+    }
+  };
+
+  const validateCaptcha = async (token: string) => {
+    try {
+      const response = await fetch('/api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+      const data = await response.json();
+      return data.message === 'Success';
+    } catch (err) {
+      console.error('Captcha validation failed:', err);
+      return false;
     }
   };
 
@@ -34,9 +65,9 @@ const SignInPage = () => {
         <form onSubmit={handleSignIn}>
           <h1 className="text-xl font-semibold mb-4">Sign In</h1>
           <div className="mb-4">
-            <label className="block text-sm mb-1">Username:</label> {/* Change label to Username */}
+            <label className="block text-sm mb-1">Username:</label>
             <input
-              type="text" // Change type to text for username
+              type="text"
               className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -53,9 +84,10 @@ const SignInPage = () => {
               required
             />
           </div>
+          <Captcha onVerify={(token) => setCaptchaToken(token)} />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700 transition-colors duration-200"
+            className="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700 transition-colors duration-200 mt-4"
           >
             Sign In
           </button>
