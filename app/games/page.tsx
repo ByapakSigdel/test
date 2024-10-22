@@ -1,84 +1,56 @@
- 'use client';
-import React, { useState } from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import ProtectedRoute from '../../components/ProtectedRoute';
-import './Games.css'; // You will create this CSS file for the spinner
+import { useRouter } from 'next/navigation';
+
+interface Game {
+  id: number;
+  name: string;
+  link: string;
+}
 
 export default function Games() {
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [result, setResult] = useState<number | null>(null);
-  const [guess, setGuess] = useState<number | null>(null);
-  const [points, setPoints] = useState<number>(100); // Initial points
-  const [message, setMessage] = useState<string>('');
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
 
-  const numbers = [0, 1, 2, 3, 4, 5]; // Numbers on the spinner
+  // Array of games
+  const games: Game[] = [
+    { id: 1, name: 'Spin and Win', link: '/games/slot' },
+    // Add more games here
+  ];
 
-  const spinAndWin = () => {
-    if (points < 10) {
-      setMessage('Not enough points to play.');
-      return;
-    }
-    if (guess === null) {
-      setMessage('Please enter your guess.');
-      return;
-    }
+  // Ensure the component is mounted on the client side
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-    setIsSpinning(true);
-    setPoints(points - 10); // Deduct points for guessing
-    setMessage('');
-
-    // Simulate spin
-    setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * numbers.length);
-      const spunNumber = numbers[randomIndex];
-      setResult(spunNumber);
-
-      if (spunNumber === guess) {
-        setPoints(points + 20); // Add points for correct guess
-        setMessage(`Correct! You won 20 points. The number was ${spunNumber}.`);
-      } else {
-        setMessage(`Wrong guess! The number was ${spunNumber}.`);
-      }
-
-      setIsSpinning(false);
-    }, 3000); // Spin for 3 seconds
+  const handleGameClick = (link: string) => {
+    router.push(link);
   };
+
+  // Don't render anything until the component is mounted
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <ProtectedRoute>
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <h1 className="text-2xl font-bold mb-6">Spin and Win</h1>
-        <div className="mb-4">Points: {points}</div>
+      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-blue-200 to-blue-400">
+        <h1 className="text-4xl font-bold mb-8 text-white">Game Directory</h1>
 
-        <input
-          type="number"
-          min="0"
-          max="5"
-          value={guess ?? ''}
-          onChange={(e) => setGuess(Number(e.target.value))}
-          placeholder="Enter your guess (0-5)"
-          className="mb-4 p-2 border rounded"
-        />
-
-        <div className="spinner-container">
-          <div className={`spinner ${isSpinning ? 'spinning' : ''}`}>
-            {numbers.map((num) => (
-              <div key={num} className="spinner-number">
-                {num}
-              </div>
-            ))}
-          </div>
-          <div className="spinner-pointer">▼</div>
+        {/* Game Boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
+          {games.map((game) => (
+            <div
+              key={game.id}
+              className="bg-white border border-gray-300 rounded-lg p-6 text-center shadow-md cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+              onClick={() => handleGameClick(game.link)}
+            >
+              <h2 className="text-2xl font-semibold mb-2 text-gray-800">{game.name}</h2>
+              <p className="text-gray-600">Click to play!</p>
+            </div>
+          ))}
         </div>
-
-        <button
-          onClick={spinAndWin}
-          disabled={isSpinning || guess === null}
-          className="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition duration-200"
-        >
-          {isSpinning ? 'Spinning...' : 'Spin Now!'}
-        </button>
-
-        {message && <div className="mt-4 text-lg">{message}</div>}
       </div>
     </ProtectedRoute>
   );
