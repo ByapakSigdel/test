@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import PocketBase from 'pocketbase';
 import ToggleSwitch from '@/components/ToggleSwitch';
 import signupBg from '../../assets/signinbg.jpg'; 
-import Captcha from '@/components/Captcha';
+/* import Captcha from '@/components/Captcha'; */
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -14,10 +14,10 @@ const SignUpPage = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+/*   const [captchaToken, setCaptchaToken] = useState<string | null>(null); */
 
   const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+/*     e.preventDefault();
     if (!captchaToken) {
       alert('Please complete the CAPTCHA.');
       return;
@@ -29,7 +29,7 @@ const SignUpPage = () => {
       alert('Invalid CAPTCHA');
       return;
     }
-
+ */
     try {
       await pb.collection('users').create({
         username,
@@ -43,7 +43,7 @@ const SignUpPage = () => {
     }
   };
 
-  const validateCaptcha = async (token: string) => {
+/*   const validateCaptcha = async (token: string) => {
     try {
       const response = await fetch('/api', {
         method: 'POST',
@@ -58,7 +58,7 @@ const SignUpPage = () => {
       console.error('Captcha validation failed:', err);
       return false;
     }
-  };
+  }; */
 
   const toggleToSignIn = () => {
     router.push('/signin');
@@ -97,7 +97,7 @@ const SignUpPage = () => {
               required
             />
           </div>
-          <Captcha onVerify={(token) => setCaptchaToken(token)} />
+          {/* <Captcha onVerify={(token) => setCaptchaToken(token)} /> */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white rounded p-2 hover:bg-blue-700 transition-colors duration-200"

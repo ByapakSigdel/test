@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PocketBase from 'pocketbase';
 import ToggleSwitch from '@/components/ToggleSwitch';
-import Captcha from '@/components/Captcha';
+/* import Captcha from '@/components/Captcha'; */
 import signinBg from '../../assets/signinbg.jpg'; // Adjust the path according to your structure
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
@@ -14,10 +14,10 @@ const SignInPage = () => {
   const router = useRouter();
   const [username, setUsername] = useState(''); // Change from email to username
   const [password, setPassword] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+/*   const [captchaToken, setCaptchaToken] = useState<string | null>(null); */
 
   const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
+/*     e.preventDefault();
     if (!captchaToken) {
       alert('Please complete the CAPTCHA.');
       return;
@@ -28,7 +28,7 @@ const SignInPage = () => {
     if (!isCaptchaValid) {
       alert('Invalid CAPTCHA');
       return;
-    }
+    } */
 
     try {
       await pb.collection('users').authWithPassword(username, password);
@@ -38,7 +38,7 @@ const SignInPage = () => {
     }
   };
 
-  const validateCaptcha = async (token: string) => {
+/*   const validateCaptcha = async (token: string) => {
     try {
       const response = await fetch('/api', {
         method: 'POST',
@@ -53,7 +53,7 @@ const SignInPage = () => {
       console.error('Captcha validation failed:', err);
       return false;
     }
-  };
+  }; */
 
   const toggleToSignUp = () => {
     router.push('/signup');
@@ -91,7 +91,7 @@ const SignInPage = () => {
               required
             />
           </div>
-          <Captcha onVerify={(token) => setCaptchaToken(token)} />
+          {/* <Captcha onVerify={(token) => setCaptchaToken(token)} /> */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 mt-4 font-semibold"
