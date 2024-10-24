@@ -16,7 +16,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     // Check if the user is authenticated
-    const isAuthenticated = pb.authStore.isValid;   /* true; */ //For TEsting purposes put true
+     const isAuthenticated = 
+     true;
+    //  pb.authStore.isValid;       //For TEsting purposes put true
     
     if (!isAuthenticated) {
       router.push('/signin'); // Redirect to signin page if not authenticated

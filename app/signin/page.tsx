@@ -32,9 +32,10 @@ const SignInPage = () => {
 
     try {
       await pb.collection('users').authWithPassword(username, password,{autoCancel: false,});
+      
       router.push('/games'); // Redirect after successful sign in
     } catch (err) {
-      console.error('Sign-in failed:', err);
+      console.error("Signin failed:", err);
     }
   };
 
