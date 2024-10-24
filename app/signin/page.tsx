@@ -17,8 +17,8 @@ const SignInPage = () => {
 /*   const [captchaToken, setCaptchaToken] = useState<string | null>(null); */
 
   const handleSignIn = async (e: React.FormEvent) => {
-/*     e.preventDefault();
-    if (!captchaToken) {
+     e.preventDefault();
+    /* if (!captchaToken) {
       alert('Please complete the CAPTCHA.');
       return;
     }
@@ -31,7 +31,7 @@ const SignInPage = () => {
     } */
 
     try {
-      await pb.collection('users').authWithPassword(username, password);
+      await pb.collection('users').authWithPassword(username, password,{autoCancel: false,});
       router.push('/games'); // Redirect after successful sign in
     } catch (err) {
       console.error('Sign-in failed:', err);

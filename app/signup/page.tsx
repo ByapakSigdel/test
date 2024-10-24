@@ -17,8 +17,8 @@ const SignUpPage = () => {
 /*   const [captchaToken, setCaptchaToken] = useState<string | null>(null); */
 
   const handleSignUp = async (e: React.FormEvent) => {
-/*     e.preventDefault();
-    if (!captchaToken) {
+    e.preventDefault();
+    /*if (!captchaToken) {
       alert('Please complete the CAPTCHA.');
       return;
     }
