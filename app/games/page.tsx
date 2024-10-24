@@ -2,42 +2,39 @@
 import React, { useEffect, useState } from 'react';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import { useRouter } from 'next/navigation';
-import { FaUserCircle } from 'react-icons/fa';
-import PocketBase from 'pocketbase'; // Import PocketBase
+import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import PocketBase from 'pocketbase';
 
 interface Game {
   id: number;
   name: string;
-  logo: string; // URL for the game's logo
+  logo: string;
   link: string;
 }
 
 const Games: React.FC = () => {
   const router = useRouter();
-  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL); // Use environment variable for PocketBase
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   const [isMounted, setIsMounted] = useState(false);
   const [currentSearch, setCurrentSearch] = useState('');
   const [user, setUser] = useState({ username: '', totalAmount: 0 });
 
-  // Array of games
   const games: Game[] = [
     { id: 1, name: 'Spin and Win', logo: '3d-casino-slot-machine.jpg', link: './games/slot' },
     { id: 2, name: 'Lucky Slots', logo: 'another-game-logo.jpg', link: './games/slot' },
-    // Add more games here
   ];
 
-  // Fetch user data from PocketBase
   useEffect(() => {
     setIsMounted(true);
 
     const fetchUserData = async () => {
       try {
-        const authData = pb.authStore.model; // Check if user is logged in
+        const authData = pb.authStore.model;
         if (authData) {
-          const record = await pb.collection('users').getOne(authData.id); // Fetch user details from the 'users' collection
+          const record = await pb.collection('users').getOne(authData.id);
           setUser({
             username: record.username,
-            totalAmount: record.totalAmount, // Ensure this field exists in the database
+            totalAmount: record.totalAmount,
           });
         }
       } catch (error) {
@@ -54,7 +51,11 @@ const Games: React.FC = () => {
     router.push(link);
   };
 
-  // Don't render anything until the component is mounted
+  const handleLogout = () => {
+    pb.authStore.clear(); // Clear the authentication state
+    router.push('/signin'); // Redirect to login page
+  };
+
   if (!isMounted) {
     return null;
   }
@@ -62,14 +63,13 @@ const Games: React.FC = () => {
   return (
     <ProtectedRoute>
       <div className="min-h-screen flex flex-col items-center justify-start bg-cover bg-center opacity-80" style={{ backgroundImage: `url('/images/card-chips_generated.jpg')` }}>
-        {/* User Info and Search Bar Section */}
+        {/* User Info, Search Bar, and Logout Section */}
         <div className="flex items-center justify-between w-full mb-8 p-4">
           <div className="flex items-center space-x-4">
             <FaUserCircle className="text-3xl text-white" />
             <span className="text-xl text-white">{user.username || 'Username'}</span>
           </div>
 
-          {/* Search Bar Moved to Top */}
           <input
             type="text"
             placeholder="Search a game..."
@@ -77,14 +77,22 @@ const Games: React.FC = () => {
             className="border rounded p-2 placeholder-black placeholder:font-bold text-black font-bold w-48 bg-blue-500 text-white"
           />
 
-          <div className="text-xl text-white">
-            Total Amount: ${user.totalAmount || 0}
+          <div className="flex items-center space-x-6">
+            <div className="text-xl text-white">
+              Total Amount: ${user.totalAmount || 0}
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-200"
+            >
+              <FaSignOutAlt />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
 
-        <h1 className="text-4xl font-bold mb-8 text-white">Game Directory</h1>
+        <h1 className="text-4xl font-bold mb-8 text-black">Game Directory</h1>
 
-        {/* Game Boxes */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
           {games
             .filter(game => game.name.toLowerCase().includes(currentSearch))
